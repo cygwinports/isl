@@ -1,5 +1,5 @@
 NAME="isl"
-VERSION=0.11.1
+VERSION=0.16.1
 RELEASE=1
 CATEGORY="Libs"
 SUMMARY="Integer Set Library"
@@ -11,14 +11,23 @@ parametric integer programming, coalescing and parametric vertex enumeration.
 It also includes an ILP solver based on generalized basis reduction, transitive
 closures on maps (which may encode infinite graphs), dependence analysis and
 bounds on piecewise step-polynomials."
-HOMEPAGE="http://garage.kotnet.org/~skimo/isl/"
-SRC_URI="http://garage.kotnet.org/~skimo/isl/isl-${VERSION}.tar.lzma"
+HOMEPAGE="http://isl.gforge.inria.fr/"
+SRC_URI="http://isl.gforge.inria.fr/isl-${VERSION}.tar.xz"
 
-PKG_NAMES="libisl10 libisl-devel"
-libisl10_SUMMARY="${SUMMARY} (runtime)"
-libisl10_CONTENTS="usr/bin/cygisl-10.dll"
+PKG_NAMES="libisl15 libisl-devel"
+libisl15_SUMMARY="${SUMMARY} (runtime)"
+libisl15_CONTENTS="usr/bin/cygisl-15.dll"
 libisl_devel_SUMMARY="${SUMMARY} (development)"
 libisl_devel_CONTENTS="usr/include/ usr/lib/ usr/share/doc/"
 
 MAKEOPTS+=" LDFLAGS=-no-undefined"
-KEEP_LA_FILES="none"
+
+src_install() {
+	cd ${B}
+	cyginstall
+
+	# Move GDB auto-load to correct name and location
+	dodir /usr/share/gdb/auto-load/usr/bin
+	mv ${D}/usr/lib/libisl.dll.a-gdb.py \
+	   ${D}/usr/share/gdb/auto-load/usr/bin/cygisl-15.dll-gdb.py
+}
